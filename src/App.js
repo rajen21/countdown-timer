@@ -3,19 +3,19 @@ import DateTimePicker from "react-datetime-picker";
 
 function App() {
   const [pickDate, setPickDate] = useState("00");
+  const [changeDate, setChangeDate] = useState(new Date());
   const [timerDays, setTimerDays] = useState("00");
   const [timerHours, setTimerHours] = useState("00");
   const [timerMinutes, setTimerMinutes] = useState("00");
   const [timerSeconds, setTimerSeconds] = useState("00");
 
-  let date_time = new Date();
   let interval;
 
   const startTimer = () => {
-    const coundownDateTime = new Date(pickDate).getTime();
+    const countdownDateTime = new Date(pickDate).getTime();
     interval = setInterval(() => {
       const now = new Date().getTime();
-      const distance = coundownDateTime - now;
+      const distance = countdownDateTime - now;
 
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor(
@@ -25,7 +25,7 @@ function App() {
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
       if (distance < 0) {
-        clearInterval(interval.current);
+        clearInterval(interval);
       } else {
         setTimerDays(days);
         setTimerHours(hours);
@@ -35,15 +35,19 @@ function App() {
     }, 1000);
   };
 
+
   const OnChange = (data) => {
-    date_time = data;
+    setChangeDate(data)
   };
 
   const onButtonClick = () => {
-    setPickDate(date_time);
+    setPickDate(changeDate);
   }
   useEffect(() => {
     startTimer();
+    return () => {
+      clearInterval(interval);
+    }
   });
 
   return (
@@ -51,15 +55,15 @@ function App() {
       <div className="date-time-picker">
         <DateTimePicker
           onChange={OnChange}
-          value={date_time}
+          value={changeDate}
         />  
         <button type="submit" onClick={onButtonClick}>
-          Start Coundown
+          Start Countdown
         </button>
       </div>
       <section className="timer">
         <div>
-          <h2>Coundown Timer</h2>
+          <h2>Countdown Timer</h2>
         </div>
         <div></div>
         <div>
